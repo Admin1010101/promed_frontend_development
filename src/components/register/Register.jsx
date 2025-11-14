@@ -12,7 +12,10 @@ import {
 import toast from "react-hot-toast";
 import register_bg_img_2 from "../../assets/images/register_bg_img.jpg";
 import { countryCodesList } from "../../utils/data";
+import { states } from "../../utils/data/index";
+import axios from "axios";
 
+const API_BASE_URL = "http://localhost:8000/api/v1";
 // --- START: COMPONENTS OUTSIDE REGISTER ---
 
 const StepIndicator = ({ step, currentStep }) => (
@@ -112,6 +115,8 @@ const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoadingZip, setIsLoadingZip] = useState(false);
   const [zipError, setZipError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [isValidating, setIsValidating] = useState(false);
   const navigate = useNavigate();
 
   // Password validation
@@ -147,7 +152,10 @@ const Register = () => {
       formData.email.trim() !== "" &&
       formData.phoneNumber.trim() !== "" &&
       formData.npiNumber.trim() !== "" &&
-      isValidNPI(formData.npiNumber)
+      isValidNPI(formData.npiNumber) &&
+      !fieldErrors.email &&
+      !fieldErrors.phoneNumber &&
+      !fieldErrors.npiNumber
     );
   };
 
@@ -164,8 +172,12 @@ const Register = () => {
   };
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  setFormData((prev) => ({ ...prev, [field]: value }));
+  // Clear field error when user starts typing
+  if (fieldErrors[field]) {
+    setFieldErrors((prev) => ({ ...prev, [field]: null }));
+  }
+};
 
   // Fetch city and state from ZIP code
   const fetchLocationFromZip = async (zip) => {
@@ -239,6 +251,82 @@ const Register = () => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
     handleChange("npiNumber", digitsOnly);
   };
+
+
+const validateStep1 = async () => {
+  setIsValidating(true);
+  setFieldErrors({});
+  
+  const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber.replace(/\D/g, "")}`;
+  
+  // Create payload for validation
+  const validationPayload = {
+    full_name: formData.fullName,
+    email: formData.email,
+    phone_number: formattedPhoneNumber,
+    country_code: formData.countryCode,
+    npi_number: formData.npiNumber,
+    password: "TempPass123!", // Dummy password just for validation
+    password2: "TempPass123!",
+  };
+
+  try {
+    // Call the VALIDATION endpoint (not registration)
+    await axios.post(`${API_BASE_URL}/provider/validate-registration/`, validationPayload);
+    
+    // If successful, fields are valid
+    setIsValidating(false);
+    return true;
+  } catch (error) {
+    setIsValidating(false);
+    
+    console.log("🔴 Validation Error Response:", error.response?.data);
+    if (error.response?.data) {
+      const errors = error.response.data;
+      const newFieldErrors = {};
+      
+      // Map backend errors to field errors
+      if (errors.phone_number) {
+        newFieldErrors.phone_number = Array.isArray(errors.phone_number) 
+          ? errors.phone_number[0] 
+          : errors.phone_number;
+      }
+      if (errors.email) {
+        newFieldErrors.email = Array.isArray(errors.email) 
+          ? errors.email[0] 
+          : errors.email;
+      }
+      if (errors.npi_number) {
+        newFieldErrors.npi_number = Array.isArray(errors.npi_number) 
+          ? errors.npi_number[0] 
+          : errors.npi_number;
+      }
+      
+      setFieldErrors(newFieldErrors);
+      
+      // Show error message
+      const errorMessages = Object.values(newFieldErrors).join(". ");
+      if (errorMessages) {
+        toast.error(errorMessages);
+        return false;
+      }
+    }
+    
+    return false;
+  }
+};
+
+// ✅ Handle step progression with validation
+const handleNextStep = async () => {
+  if (currentStep === 1) {
+    const isValid = await validateStep1();
+    if (isValid) {
+      setCurrentStep(currentStep + 1);
+    }
+  } else {
+    setCurrentStep(currentStep + 1);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -458,6 +546,8 @@ const Register = () => {
                         value={formData.email}
                         onChange={(e) => handleChange("email", e.target.value)}
                         placeholder="john@example.com"
+                        error={!!fieldErrors.email}
+                        helperText={fieldErrors.email}
                         required
                       />
                       <div>
@@ -482,6 +572,7 @@ const Register = () => {
                               </option>
                             ))}
                           </select>
+                          <div className="flex-1">
                           <input
                             type="tel"
                             value={formData.phoneNumber}
@@ -489,9 +580,24 @@ const Register = () => {
                               handleChange("phoneNumber", e.target.value)
                             }
                             placeholder="555-555-5555"
-                            className="flex-1 px-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                            className={`w-full px-4 py-4 bg-white/5 border ${
+                              fieldErrors.phone_number ? "border-red-500/50" : "border-white/10"
+                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                              fieldErrors.phone_number ? "focus:ring-red-500/50" : "focus:ring-teal-500/50"
+                            } transition-all duration-300`}
                             required
                           />
+                          {fieldErrors.phone_number && (
+                            <motion.p
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="mt-2 text-xs flex items-center gap-1 text-red-400"
+                            >
+                              <IoAlertCircle className="text-sm" />
+                              {fieldErrors.phone_number}
+                            </motion.p>
+                          )}
+                          </div>
                         </div>
                       </div>
                       <InputField
@@ -501,7 +607,7 @@ const Register = () => {
                         onChange={handleNPIChange}
                         placeholder="1234567890"
                         maxLength="10"
-                        error={npiError}
+                        error={npiError || !!fieldErrors.npi_number}
                         helperText={
                           npiError
                             ? "NPI must be exactly 10 digits"
@@ -707,31 +813,31 @@ const Register = () => {
                   {currentStep < 3 ? (
                     <motion.button
                       type="button"
-                      onClick={() => setCurrentStep(currentStep + 1)}
+                      onClick={handleNextStep}
                       disabled={
                         (currentStep === 1 && !isStep1Valid()) ||
-                        (currentStep === 2 && !isStep2Valid())
+                        (currentStep === 2 && !isStep2Valid()) || isValidating
                       }
                       className={`flex-1 py-4 font-bold rounded-xl shadow-lg transition-all ${
                         (currentStep === 1 && !isStep1Valid()) ||
-                        (currentStep === 2 && !isStep2Valid())
+                        (currentStep === 2 && !isStep2Valid()) || isValidating
                           ? "bg-gray-600 text-gray-400 cursor-not-allowed opacity-50"
                           : "bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white shadow-teal-500/25"
                       }`}
                       whileHover={
                         (currentStep === 1 && isStep1Valid()) ||
-                        (currentStep === 2 && isStep2Valid())
+                        (currentStep === 2 && isStep2Valid()) && !isValidating
                           ? { scale: 1.02 }
                           : {}
                       }
                       whileTap={
                         (currentStep === 1 && isStep1Valid()) ||
-                        (currentStep === 2 && isStep2Valid())
+                        (currentStep === 2 && isStep2Valid()) && !isValidating
                           ? { scale: 0.98 }
                           : {}
                       }
                     >
-                      Continue
+                      {isValidating ? "Please wait..." : "Continue"}  
                     </motion.button>
                   ) : (
                     <motion.button
