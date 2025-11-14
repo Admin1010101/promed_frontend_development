@@ -10,7 +10,7 @@ import {
   IoAlertCircle,
 } from "react-icons/io5";
 import toast from "react-hot-toast";
-import register_bg_img_2 from "../../assets/images/register_bg_img.jpg";
+import register_bg_img_2 from "../../assets/images/register.jpg";
 import { countryCodesList } from "../../utils/data";
 import { states } from "../../utils/data/index";
 import axios from "axios";
