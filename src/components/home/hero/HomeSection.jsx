@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"; // <-- Import AnimatePresence
 import wound_care_home_img from '../../../assets/images/home_bg_img_2.jpg'
+import woundcare_img_1 from '../../../assets/images/main-promed-square.jpg'
+import woundcare_img_2 from '../../../assets/images/register_bg_img.jpg'
 import ContactModal from "./ContactModal";
 import toast from 'react-hot-toast'; 
 import axios from "axios"; 
@@ -97,7 +99,125 @@ const HeroSection = () => {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
-      <section className="relative px-4 sm:px-8 lg:px-16 xl:px-40 2xl:px-64 overflow-hidden flex items-center min-h-screen"> 
+      {/* Intro section with animations */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
+
+        {/* Background gradient */}
+        <motion.div
+          className="absolute inset-0 
+            dark:bg-gradient-to-br dark:from-transparent dark:via-teal-400/10 dark:to-teal-600/30
+            bg-gradient-to-br from-teal-600 via-teal-100 to-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        />
+
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(30)].map((_, i) => (
+            <motion.span
+              key={i}
+              className="absolute block w-1 h-1 bg-teal-600 dark:bg-teal-300 rounded-full opacity-40"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight + 200,
+                scale: 0,
+              }}
+              animate={{
+                y: -100,
+                opacity: [0, 1, 0],
+                scale: 1,
+              }}
+              transition={{
+                duration: 2 + Math.random() * 1.5,
+                repeat: Infinity,
+                delay: Math.random(),
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10 flex flex-col items-center lg:flex-row lg:justify-center lg:gap-16">
+
+          {/* Text column */}
+          <motion.div
+            className="flex flex-col items-center text-center lg:text-center relative z-10"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 1 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+            }}
+          >
+            {/* Title row */}
+            <div className="flex items-center justify-center gap-6 flex-wrap">
+
+              {/* "ProMed Health" sliding from left */}
+              <motion.span
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white drop-shadow-lg whitespace-nowrap"
+                variants={{
+                  hidden: { opacity: 0, x: "-100vw" },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    transition: { duration: 0.65, ease: "easeOut" }
+                  }
+                }}
+              >
+                ProMed Health
+              </motion.span>
+
+              {/* "Plus" sliding from top */}
+              <motion.span
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-500 dark:text-teal-400 drop-shadow-lg whitespace-nowrap"
+                variants={{
+                  hidden: { opacity: 0, y: "-100vw" },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.65, ease: "easeOut" }
+                  }
+                }}
+              >
+                Plus
+              </motion.span>
+            </div>
+
+            {/* Subtitle */}
+            <motion.p
+              className="text-neutral-400 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 drop-shadow-xl max-w-lg"
+              variants={{
+                hidden: { opacity: 0, y: 80 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.1 } }
+              }}
+            >
+              Advancing Wound Care for a New Generation
+            </motion.p>
+            
+          </motion.div>
+
+          {/* Image column (next to title) */}
+          <motion.div
+            className="hidden lg:block relative"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-teal-400/20 blur-3xl rounded-full" />
+              
+              <img
+                src={woundcare_img_1}
+                className="relative z-10 size-96 dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl"
+              />
+            </div>
+          </motion.div>
+            
+        </div>
+      </section>
+      
+      <section className="relative px-4 sm:px-8 lg:px-16 xl:px-40 2xl:px-32 overflow-hidden flex items-center min-h-screen"> 
         <motion.div 
           className="absolute inset-0 z-0"
           initial={{ scale: 1.05 }}
@@ -119,7 +239,7 @@ const HeroSection = () => {
         >
           <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm shadow-2xl"> 
             <motion.h1 
-              className="text-white text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-bold leading-tight drop-shadow-lg"
+              className="text-white text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight drop-shadow-lg"
               variants={itemVariants}
             >
               Promed Health <span className="text-teal-400">Plus</span>
