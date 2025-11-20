@@ -72,44 +72,66 @@ const HeroSection = () => {
       toast.error("Failed to send message. Please try again.");
     }
   };
-  // Framer Motion Variants for Staggered Entrance (rest of the component logic)
-  const containerVariants = {
+
+  // Framer Motion Variants
+  const backgroundVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2, 
-        delayChildren: 0.3,   
-      },
-    },
+      transition: { duration: 0.8 }
+    }
   };
-
+  const imageVariants = {
+    hidden: {
+      opacity: 0,
+      x: 50
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.8, delay: 0.3 }
+    }
+  };
+  const slideFromLeftVariants = {
+    hidden: { opacity: 0, x: "-100vw" },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.65, ease: "easeOut" }
+    }
+  }
+  const slideFromTopVariants = {
+    hidden: { opacity: 0, y: "-100vw" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: "easeOut" }
+    }
+  }
+  const subtitleVariants = {
+    hidden: { opacity: 0, y: 80 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.1 } }
+  }
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        type: "spring", 
-        stiffness: 150, 
-        damping: 20 
-      } 
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 150, damping: 20 }
     },
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
-      {/* Intro section with animations */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 pt-32 lg:pt-16">
-
+    <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500 mt-20 lg:mt-0">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 lg:pt-10 pt-4">
         {/* Background gradient */}
         <motion.div
           className="absolute inset-0 
             dark:bg-gradient-to-br dark:from-transparent dark:via-teal-400/10 dark:to-teal-600/30
-            bg-gradient-to-br from-teal-400 via-teal-100 to-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+            bg-gradient-to-br from-teal-300 via-teal-100 to-white"
+          initial="hidden"
+          animate="visible"
+          variants={backgroundVariants}
         />
 
         {/* Floating particles */}
@@ -137,7 +159,7 @@ const HeroSection = () => {
           ))}
         </div>
 
-        {/* Main Content */}
+        {/* Main content */}
         <div className="relative z-10 flex flex-col items-center lg:flex-row lg:justify-center lg:gap-16">
 
           {/* Text column */}
@@ -155,15 +177,8 @@ const HeroSection = () => {
 
               {/* "ProMed Health" sliding from left */}
               <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-700 dark:text-white drop-shadow-md whitespace-nowrap"
-                variants={{
-                  hidden: { opacity: 0, x: "-100vw" },
-                  visible: {
-                    opacity: 1,
-                    x: 0,
-                    transition: { duration: 0.65, ease: "easeOut" }
-                  }
-                }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-700 dark:text-white whitespace-nowrap"
+                variants={slideFromLeftVariants}
               >
                 ProMed Health
               </motion.span>
@@ -171,14 +186,7 @@ const HeroSection = () => {
               {/* "Plus" sliding from top */}
               <motion.span
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-500 dark:text-teal-400 whitespace-nowrap"
-                variants={{
-                  hidden: { opacity: 0, y: "-100vw" },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.65, ease: "easeOut" }
-                  }
-                }}
+                variants={slideFromTopVariants}
               >
                 Plus
               </motion.span>
@@ -186,11 +194,8 @@ const HeroSection = () => {
 
             {/* Subtitle */}
             <motion.p
-              className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 dark:drop-shadow-xl max-w-lg"
-              variants={{
-                hidden: { opacity: 0, y: 80 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.1 } }
-              }}
+              className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 max-w-lg"
+              variants={subtitleVariants}
             >
               Advancing Wound Care for a New Generation
             </motion.p>
@@ -198,7 +203,7 @@ const HeroSection = () => {
             {/* Contact button */}
             <motion.button
               onClick={handleOpen}
-              className="px-10 py-4 bg-teal-500 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-700 transition-colors duration-300 shadow-xl"
+              className="px-10 py-4 bg-teal-500 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-700 transition-colors duration-300"
               variants={itemVariants}
               whileHover={{ scale: 1.05, boxShadow: "0 15px 25px rgba(0, 0, 0, 0.4)" }}
               whileTap={{ scale: 0.95 }}
@@ -211,16 +216,16 @@ const HeroSection = () => {
           {/* Image column (next to title) */}
           <motion.div
             className="block relative pt-10"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            initial="hidden"
+            animate="visible"
+            variants={imageVariants}
           >
             <div className="relative">
               <div className="absolute inset-0 bg-teal-400/20 blur-3xl rounded-full" />
               
               <img
                 src={woundcare_img_1}
-                className="relative z-10 w-[30rem] lg:w-[30rem] dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl"
+                className="relative z-10 w-[30rem] lg:w-[35rem] dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl mb-4 lg:mb-0"
               />
             </div>
           </motion.div>
