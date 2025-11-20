@@ -100,13 +100,13 @@ const HeroSection = () => {
   return (
     <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
       {/* Intro section with animations */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 pt-32 lg:pt-16">
 
         {/* Background gradient */}
         <motion.div
           className="absolute inset-0 
             dark:bg-gradient-to-br dark:from-transparent dark:via-teal-400/10 dark:to-teal-600/30
-            bg-gradient-to-br from-teal-600 via-teal-100 to-white"
+            bg-gradient-to-br from-teal-400 via-teal-100 to-white"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -117,7 +117,7 @@ const HeroSection = () => {
           {[...Array(30)].map((_, i) => (
             <motion.span
               key={i}
-              className="absolute block w-1 h-1 bg-teal-600 dark:bg-teal-300 rounded-full opacity-40"
+              className="absolute block w-1.5 h-1.5 bg-teal-500 dark:bg-teal-300 opacity-40 rounded-full blur-[1px]"
               initial={{
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight + 200,
@@ -151,11 +151,11 @@ const HeroSection = () => {
             }}
           >
             {/* Title row */}
-            <div className="flex items-center justify-center gap-6 flex-wrap">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
 
               {/* "ProMed Health" sliding from left */}
               <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white drop-shadow-lg whitespace-nowrap"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-700 dark:text-white drop-shadow-md whitespace-nowrap"
                 variants={{
                   hidden: { opacity: 0, x: "-100vw" },
                   visible: {
@@ -170,7 +170,7 @@ const HeroSection = () => {
 
               {/* "Plus" sliding from top */}
               <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-500 dark:text-teal-400 drop-shadow-lg whitespace-nowrap"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-500 dark:text-teal-400 whitespace-nowrap"
                 variants={{
                   hidden: { opacity: 0, y: "-100vw" },
                   visible: {
@@ -186,7 +186,7 @@ const HeroSection = () => {
 
             {/* Subtitle */}
             <motion.p
-              className="text-neutral-400 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 drop-shadow-xl max-w-lg"
+              className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 dark:drop-shadow-xl max-w-lg"
               variants={{
                 hidden: { opacity: 0, y: 80 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.1 } }
@@ -194,12 +194,23 @@ const HeroSection = () => {
             >
               Advancing Wound Care for a New Generation
             </motion.p>
+              
+            {/* Contact button */}
+            <motion.button
+              onClick={handleOpen}
+              className="px-10 py-4 bg-teal-500 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-700 transition-colors duration-300 shadow-xl"
+              variants={itemVariants}
+              whileHover={{ scale: 1.05, boxShadow: "0 15px 25px rgba(0, 0, 0, 0.4)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Contact Us
+            </motion.button>
             
           </motion.div>
 
           {/* Image column (next to title) */}
           <motion.div
-            className="hidden lg:block relative"
+            className="block relative pt-10"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -209,60 +220,12 @@ const HeroSection = () => {
               
               <img
                 src={woundcare_img_1}
-                className="relative z-10 size-96 dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl"
+                className="relative z-10 w-[30rem] lg:w-[30rem] dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl"
               />
             </div>
           </motion.div>
             
         </div>
-      </section>
-      
-      <section className="relative px-4 sm:px-8 lg:px-16 xl:px-40 2xl:px-32 overflow-hidden flex items-center min-h-screen"> 
-        <motion.div 
-          className="absolute inset-0 z-0"
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        >
-          <img
-            src={wound_care_home_img}
-            alt="Medical professionals working on wound care"
-            className="w-full h-full object-cover object-right" 
-          />
-        </motion.div>
-        <div className="absolute inset-0 z-0 bg-gray-900/20 dark:bg-gray-900/60"></div>
-        <motion.div 
-          className="lg:w-3/4 xl:w-2/4 relative z-10 py-16" 
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm shadow-2xl"> 
-            <motion.h1 
-              className="text-white text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight drop-shadow-lg"
-              variants={itemVariants}
-            >
-              Promed Health <span className="text-teal-400">Plus</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-gray-200 text-lg md:text-xl leading-snug mt-2 ML-2 max-w-lg drop-shadow-md"
-              variants={itemVariants}
-            >
-              {''}Built For The Next Generation Of Care...
-            </motion.p>
-            
-            <motion.button
-              onClick={handleOpen}
-              className="px-10 py-4 bg-teal-600 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-700 transition-colors duration-300 shadow-xl"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05, boxShadow: "0 15px 25px rgba(0, 0, 0, 0.4)" }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Contact Us
-            </motion.button>
-          </div>
-        </motion.div>
       </section>
       
       <AnimatePresence>
