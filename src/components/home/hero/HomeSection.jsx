@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"; // <-- Import AnimatePresence
-import wound_care_home_img from '../../../assets/images/home_bg_img_2.jpg'
 import woundcare_img_1 from '../../../assets/images/main-promed-square.jpg'
-import woundcare_img_2 from '../../../assets/images/register_bg_img.jpg'
 import ContactModal from "./ContactModal";
 import toast from 'react-hot-toast'; 
 import axios from "axios"; 
