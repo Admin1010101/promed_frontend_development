@@ -47,6 +47,11 @@ export const AuthProvider = ({ children }) => {
       const axiosInstance = axiosAuth(); // Uses the token provided in the header
       const response = await axiosInstance.get("/provider/profile/");
 
+      console.log("🔍 RAW API RESPONSE:", response.data); // ✅ Add this
+    console.log("🔍 User city:", response.data.user?.city); // ✅ Add this
+    console.log("🔍 User state:", response.data.user?.state); // ✅ Add this
+    console.log("🔍 User country:", response.data.user?.country); // ✅ Add this
+
       // UNIFY THE USER OBJECT: Avoid nesting user data under a second 'user' key.
       const unifiedUser = {
         // Base authentication details (from token)
@@ -177,9 +182,15 @@ const login = async (email, password, method = "sms") => {
       email: email.trim(),
       password,
       method,
+      
     });
-
-    const { access, refresh, mfa_required, session_id } = response.data;
+    const { access, refresh, mfa_required, session_id, user } = response.data;
+    const userRole = user?.role; // Extracting role from user object if available
+    // Store role from backend response
+    if (userRole) {
+      localStorage.setItem("userRole", userRole);
+      // console.log("Stored role in localStorage:", userRole);
+    }
 
     // 1. Handle MFA requirement
     if (mfa_required) {
@@ -193,6 +204,7 @@ const login = async (email, password, method = "sms") => {
     // 2. Handle successful full login
     localStorage.setItem("accessToken", access);
     localStorage.setItem("refreshToken", refresh);
+    // localStorage.setItem("userRole", userRole);
     clearMfaState(); // ensure any lingering MFA state is gone
 
     await fetchUserData(access); // Populate user state immediately
@@ -204,6 +216,11 @@ const login = async (email, password, method = "sms") => {
     if (error.response?.status === 403 && errorData?.baa_required) {
       localStorage.setItem("accessToken", errorData.access); // Temp token
       sessionStorage.setItem("isBAARequired", "true"); // Flag for router
+
+      const userRole = errorData.user?.role;
+      if (userRole) {
+        localStorage.setItem("userRole", userRole);
+      }
 
       setUser(errorData.user || { email: email.trim() });
       setIsBAARequired(true);
@@ -321,6 +338,13 @@ const login = async (email, password, method = "sms") => {
       if (!finalRefreshToken || !newAccessToken) {
         throw new Error("Missing final tokens in verification response.");
       }
+
+      const decodedToken = jwtDecode(newAccessToken);
+      const userRole = decodedToken.role;
+      if (userRole) {
+      localStorage.setItem("userRole", userRole);
+      console.log("✅ Stored role after MFA:", userRole);
+    }
 
       // 1. Final tokens stored
       localStorage.setItem("refreshToken", finalRefreshToken);

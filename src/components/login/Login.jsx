@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMsg("");
-
+    console.log("🔑 Attempting login with method:");
     const result = await login(email, password, method);
 
     // ✅ ADDED: Handle BAA Required response
