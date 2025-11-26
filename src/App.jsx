@@ -82,17 +82,19 @@ function AppWrapper() {
 
   // 1. Dark Mode Initialization (remains the same)
   useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode");
+    // const savedMode = localStorage.getItem("darkMode");
 
-    const isDark = savedMode === null ? true : savedMode === "true";
+    // const isDark = savedMode === null ? true : savedMode === "true";
     
-    setIsDarkMode(isDark);
+    // setIsDarkMode(isDark);
 
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // if (isDark) {
+    //   document.documentElement.classList.add("dark");
+    // } else {
+    //   document.documentElement.classList.remove("dark");
+    // }
+    document.documentElement.classList.add("dark");
+  localStorage.setItem("darkMode", "true");
   }, []);
 
   // 2. Session Timeout Logic (remains the same)

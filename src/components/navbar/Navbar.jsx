@@ -287,7 +287,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }) => {
           ) : isAuthenticated ? (
             // ✅ Authenticated UI (Only renders if user data is loaded)
             <div className="hidden lg:flex items-center space-x-4">
-              <button
+              {/* <button
                 onClick={toggleDarkMode}
                 aria-label="Toggle Dark Mode"
                 className="p-2.5 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 hover:shadow-lg transform hover:scale-110 transition-all duration-300 flex-shrink-0 group"
@@ -303,7 +303,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }) => {
                     className="text-teal-600 group-hover:-rotate-180 transition-transform duration-500"
                   />
                 )}
-              </button>
+              </button> */}
 
               {/* Notification Dropdown (No changes needed, relies on isAuthenticated) */}
               <div
