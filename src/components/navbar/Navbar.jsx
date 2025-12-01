@@ -428,7 +428,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }) => {
             /* Desktop Right Side - Unauthenticated */
             <div className="hidden lg:flex items-center space-x-4">
               {/* ... Unauthenticated buttons (No change) ... */}
-              <button
+              {/* <button
                 onClick={toggleDarkMode}
                 aria-label="Toggle Dark Mode"
                 className="p-2.5 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 hover:shadow-lg transform hover:scale-110 transition-all duration-300 flex-shrink-0 group"
@@ -444,7 +444,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }) => {
                     className="text-teal-600 group-hover:-rotate-180 transition-transform duration-500"
                   />
                 )}
-              </button>
+              </button> */}
               <Link to="/login">
                 <button className="px-6 py-2.5 text-sm font-bold tracking-wide text-white bg-gradient-to-r from-teal-600 to-teal-500 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 uppercase whitespace-nowrap flex justify-center items-center">
                   <PiSignIn className="mr-1 font-bold" /> Dashboard Login

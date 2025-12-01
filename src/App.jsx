@@ -26,6 +26,7 @@ import VerifyEmail from "./components/verifyEmail/VerifyEmail";
 import ForgotPassword from "./components/login/ForgotPassword";
 import ResetPassword from "./components/login/ResetPassword";
 import BAAAgreementPage from "./components/login/BAAAgreementPage";
+import TreatmentSelection from "./components/treatment/TreatmentSelection";
 
 // Utility Imports
 // 🔑 AuthProvider is imported correctly here
@@ -75,6 +76,7 @@ function AppWrapper() {
     "/reset-password",
     "/verify-email",
     "/baa-agreement", // Added BAA screen to hide nav/footer
+    "/treatment-selection"
   ];
   const shouldHideNavAndFooter = hiddenPaths.some((path) =>
     location.pathname.startsWith(path)
@@ -185,7 +187,15 @@ function AppWrapper() {
   // Rule C: Logged-in users WITHOUT pending states can access secured routes
   // ✅ CRITICAL FIX: Add checks for !isBAARequired && !isMfaPending
   if (user && !isBAARequired && !isMfaPending) {
+    const userRole = localStorage.getItem("userRole");
+    const hasSelectedTreatment = localStorage.getItem('selectedTreatment');
+    if (userRole === "provider" && !hasSelectedTreatment && location.pathname === "/dashboard") {
+      return <Navigate to="/treatment-selection" replace />;
+    }
     if (isAuthRoute(location.pathname) || isPublicRoute(location.pathname)) {
+      if (userRole === "provider" && !hasSelectedTreatment) {
+        return <Navigate to="/treatment-selection" replace />;
+      }
       return <Navigate to="/dashboard" replace />;
     }
   }
@@ -224,6 +234,7 @@ function AppWrapper() {
             <Route path="/mfa" element={<MFA />} />
 
             {/* Private Routes (Secured) */}
+            <Route path="/treatment-selection" element={<TreatmentSelection />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
               path="/sales-rep/dashboard"

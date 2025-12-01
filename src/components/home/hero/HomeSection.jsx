@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion"; // <-- Import AnimatePresence
-import woundcare_img from '../../../assets/images/main-promed-square.jpg'
+import { motion, AnimatePresence } from "framer-motion";
 import promed_video from '../../../assets/videos/homepage-video.mp4'
 import ContactModal from "./ContactModal";
 import FloatingParticles from "../FloatingParticles"
@@ -81,17 +80,6 @@ const HeroSection = () => {
       transition: { duration: 0.8 }
     }
   };
-  const imageVariants = {
-    hidden: {
-      opacity: 0,
-      x: 50
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8, delay: 0.3 }
-    }
-  };
   const slideFromLeftVariants = {
     hidden: { opacity: 0, x: "-100vw" },
     visible: {
@@ -122,19 +110,27 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
+    <div className="bg-gray-100 dark:bg-gray-900 transition-colors duration-500 pb-0">
+      <section className="relative flex items-center justify-center overflow-hidden px-4 py-28 lg:py-24 pt-32 min-h-[90vh]">
+        
+        {/* Video Background */}
+        <video
+          src={promed_video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0 mt-[60px]"
+        />
 
-      {/* Video Banner */}
-      <div className="pt-20">
-        <video src={promed_video} autoPlay loop muted playsInline />
-      </div>
+        {/* Dark Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/60 z-0"></div>
 
-      <section className="relative flex items-center justify-center overflow-hidden px-4 py-28 lg:py-24">
-        {/* Background gradient */}
+        {/* Background gradient overlay */}
         <motion.div
           className="absolute inset-0 
-            dark:bg-gradient-to-br dark:from-transparent dark:via-teal-400/10 dark:to-teal-600/30
-            bg-gradient-to-br from-teal-300 via-teal-100 to-white"
+            dark:bg-gradient-to-br dark:from-teal-900/20 dark:via-transparent dark:to-teal-600/20
+            bg-gradient-to-br from-teal-900/30 via-transparent to-teal-600/20"
           initial="hidden"
           whileInView="visible"
           variants={backgroundVariants}
@@ -160,7 +156,7 @@ const HeroSection = () => {
 
               {/* "ProMed Health" sliding from left */}
               <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-700 dark:text-white whitespace-nowrap"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white whitespace-nowrap drop-shadow-2xl"
                 variants={slideFromLeftVariants}
               >
                 ProMed Health
@@ -168,7 +164,7 @@ const HeroSection = () => {
 
               {/* "Plus" sliding from top */}
               <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-500 dark:text-teal-400 whitespace-nowrap"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-teal-400 whitespace-nowrap drop-shadow-2xl"
                 variants={slideFromTopVariants}
               >
                 Plus
@@ -177,7 +173,7 @@ const HeroSection = () => {
 
             {/* Subtitle */}
             <motion.p
-              className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl md:text-2xl mt-8 max-w-lg"
+              className="text-gray-200 text-lg sm:text-xl md:text-2xl mt-8 max-w-lg drop-shadow-lg"
               variants={subtitleVariants}
             >
               Advancing Wound Care for a New Generation
@@ -186,7 +182,7 @@ const HeroSection = () => {
             {/* Contact button */}
             <motion.button
               onClick={handleOpen}
-              className="px-10 py-4 bg-teal-500 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-700 transition-colors duration-300"
+              className="px-10 py-4 bg-teal-500 text-white rounded-full inline-block mt-8 font-bold text-sm uppercase tracking-wider hover:bg-teal-600 transition-colors duration-300 shadow-xl"
               variants={itemVariants}
               whileHover={{ scale: 1.05, boxShadow: "0 15px 25px rgba(0, 0, 0, 0.4)" }}
               whileTap={{ scale: 0.95 }}
@@ -194,24 +190,6 @@ const HeroSection = () => {
               Contact Us
             </motion.button>
             
-          </motion.div>
-
-          {/* Image column (next to title) */}
-          <motion.div
-            className="block relative pt-10"
-            initial="hidden"
-            whileInView="visible"
-            variants={imageVariants}
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-teal-400/20 blur-3xl rounded-full" />
-              
-              <img
-                src={woundcare_img}
-                className="relative z-10 w-[30rem] lg:w-[35rem] dark:opacity-80 object-contain drop-shadow-2xl rounded-3xl mb-4 lg:mb-0"
-                alt="woundcare square"
-              />
-            </div>
           </motion.div>
             
         </div>
