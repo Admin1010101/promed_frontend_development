@@ -97,6 +97,7 @@ const AdvancedCareDashboard = () => {
   
   // Modal State
   const [openIvrModal, setOpenIvrModal] = useState(false);
+  const [ivrSubmitted, setIvrSubmitted] = useState(false);
 
   // Form States
   const [patientSearch, setPatientSearch] = useState('');
@@ -181,11 +182,41 @@ const AdvancedCareDashboard = () => {
     };
   };
 
+  const getFullIvrInitialData = () => {
+  const patient = selectedPatient || newPatientData;
+  console.log('Generating IVR initial data for patient:', patient);
+  return {
+    // 🔹 Patient fields
+    patientId: patient.id,
+    first_name: patient.first_name,
+    last_name: patient.last_name,
+
+    // 🔹 Wound data from Step 2
+    woundDetails: {
+      type: woundDetails.type,
+      location: woundDetails.location,
+      icd10: woundDetails.icd10,
+      drainage: woundDetails.drainage,
+      conservative_care: woundDetails.conservative_care,
+      chronic: woundDetails.chronic,
+      length: woundDetails.size_length,
+      width: woundDetails.size_width,
+      depth: woundDetails.size_depth
+    },
+
+    // 🔹 Kit size + Duration from Step 3
+    recommendedKit,
+    duration,
+  };
+};
+
+
   // Handler for IVR form completion
   const handleIvrFormComplete = (result) => {
     setOpenIvrModal(false);
     console.log('IVR Form submitted:', result);
-    loadDashboardData(); // Refresh data
+    setIvrSubmitted(true);
+    handleSubmitOrder()// Refresh data
   };
 
   
@@ -372,6 +403,7 @@ const AdvancedCareDashboard = () => {
             <button 
               onClick={() => {
                 setCurrentView('newOrder');
+                setIvrSubmitted(false);
                 setOrderStep(1);
               }}
               className="px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-semibold flex items-center gap-2 transition"
@@ -379,16 +411,20 @@ const AdvancedCareDashboard = () => {
               <IoAddCircleOutline className="text-xl" />
               New CareKit Order
             </button>
-            <button 
+            {/* <button 
               onClick={() => setOpenIvrModal(true)}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold flex items-center gap-2 transition"
             >
               <IoDocumentTextOutline className="text-xl" />
               Submit IVR
-            </button>
+            </button> */}
           </div>
           <div className="flex gap-3">
-            <button className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+            <button 
+              onClick={() => setCurrentView('patientsList')}
+              className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white 
+                        rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            >
               Patients
             </button>
             <button className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
@@ -785,7 +821,8 @@ const AdvancedCareDashboard = () => {
   );
 
   // New Order - Step 3: Recommended CareKit
-  const renderNewOrderStep3 = () => (
+  const renderNewOrderStep3 = () => {
+  return (
     <div className="px-4 sm:px-6 lg:px-12">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
@@ -854,7 +891,13 @@ const AdvancedCareDashboard = () => {
               Back
             </button>
             <button 
-              onClick={handleSubmitOrder}
+              onClick={() => {
+                if (!ivrSubmitted) {
+                  setOpenIvrModal(true);
+                } else {
+                  handleSubmitOrder();
+                }
+              }}
               disabled={loading}
               className="px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
@@ -871,7 +914,40 @@ const AdvancedCareDashboard = () => {
         </div>
       </div>
     </div>
-  );
+  )};
+
+  const renderIVRRequiredStep = () => (
+  <div className="px-4 sm:px-6 lg:px-12">
+    <div className="max-w-2xl mx-auto text-center py-16">
+      
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        IVR Submission Required
+      </h2>
+
+      <p className="text-gray-700 dark:text-gray-300 mb-6">
+        Before submitting this CareKit order, you must complete an IVR form for the selected patient.
+      </p>
+
+      <button
+        onClick={() => setOpenIvrModal(true)}
+        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 
+                   text-white rounded-lg font-semibold transition"
+      >
+        Submit IVR Form
+      </button>
+
+      <div className="mt-6">
+        <button
+          onClick={() => setCurrentView('newOrder')}
+          className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:underline"
+        >
+          ← Back to Kit Selection
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 
   // Success Messages
   const renderSuccess = (type) => (
@@ -916,14 +992,91 @@ const AdvancedCareDashboard = () => {
     </div>
   );
 
+
+  // Patients List View
+const renderPatientsList = () => (
+  <div className="px-4 sm:px-6 lg:px-12">
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+        
+        {/* Back Button */}
+        <button 
+          onClick={() => setCurrentView('dashboard')}
+          className="flex items-center gap-2 text-teal-600 dark:text-teal-400 hover:underline mb-6"
+        >
+          <IoArrowBack /> Back to Dashboard
+        </button>
+
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          My Patients
+        </h2>
+
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search patients..."
+            value={patientSearch}
+            onChange={(e) => setPatientSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 
+                       border border-gray-300 dark:border-gray-700 rounded-lg 
+                       text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+
+        {/* Patient List */}
+        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+          {patients
+            .filter(p => {
+              const full = `${p.first_name} ${p.last_name}`.toLowerCase();
+              return full.includes(patientSearch.toLowerCase());
+            })
+            .map(patient => (
+              <div 
+                key={patient.id}
+                className="p-4 cursor-pointer border border-gray-200 dark:border-gray-700 
+                           bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 
+                           dark:hover:bg-gray-700 transition"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {patient.first_name} {patient.last_name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  DOB: {patient.date_of_birth || 'N/A'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Phone: {patient.phone_number || 'N/A'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Latest IVR: {patient.latest_ivr_status_display || 'None'}
+                </p>
+              </div>
+            ))
+          }
+
+          {patients.length === 0 && (
+            <p className="text-center text-gray-500 dark:text-gray-400">
+              No patients found.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+
   // Main Render Logic
   return (
     <>
       <div>
         {currentView === 'dashboard' && renderDashboard()}
+        {currentView === 'patientsList' && renderPatientsList()}
         {currentView === 'newOrder' && orderStep === 1 && renderNewOrderStep1()}
         {currentView === 'newOrder' && orderStep === 2 && renderNewOrderStep2()}
         {currentView === 'newOrder' && orderStep === 3 && renderNewOrderStep3()}
+        {currentView === 'ivrRequired' && renderIVRRequiredStep()}
         {currentView === 'orderSuccess' && renderSuccess('order')}
         {currentView === 'reorderSuccess' && renderSuccess('reorder')}
       </div>
@@ -932,7 +1085,7 @@ const AdvancedCareDashboard = () => {
       <IvrFormModal
         open={openIvrModal}
         onClose={() => setOpenIvrModal(false)}
-        initialData={getIvrInitialData(selectedPatient)}
+        initialData={getFullIvrInitialData()}
         onFormComplete={handleIvrFormComplete}
       />
     </>
