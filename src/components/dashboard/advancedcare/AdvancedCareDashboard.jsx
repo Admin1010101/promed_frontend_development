@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import IvrFormModal from '../patient/IvrFormModal';
 
 // API Configuration
-const API_BASE_URL = "https://promedhealth-frontdoor-h4c4bkcxfkduezec.z02.azurefd.net/api/v1";
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/';
 
 // API Helper Functions
 const getAuthHeaders = () => {
